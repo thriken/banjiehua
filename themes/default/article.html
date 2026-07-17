@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{phrase}} - {{fullText}} | {{siteName}}</title>
+<meta name="description" content="{{phrase}}：{{fullText}}. {{source}}">
+<meta name="keywords" content="{{phrase}},{{fullText}},{{category}},{{tagsStr}}">
+<link rel="canonical" href="{{siteUrl}}/entry/{{id}}">
+<meta property="og:title" content="{{phrase}} - {{fullText}}">
+<meta property="og:description" content="{{source}}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{siteUrl}}/entry/{{id}}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{phrase}} - {{fullText}}",
+  "description": "{{source}}",
+  "author": { "@type": "Person", "name": "{{author}}" },
+  "datePublished": "{{createdAt}}",
+  "dateModified": "{{updatedAt}}"
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Ma+Shan+Zheng&display=swap');
+
+:root {
+  --bg: #F5F0E8; --card-bg: #FFFBF5; --text: #3C3428;
+  --text-2: #6B5E4F; --text-3: #999080; --accent: #B33A2A;
+  --accent2: #D4A853; --border: #D4C5B9;
+  --shadow: 0 2px 12px rgba(60, 52, 40, 0.08); --radius: 8px;
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+  --font-display: 'Ma Shan Zheng', 'Noto Serif SC', cursive;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-serif); background: var(--bg);
+  color: var(--text); line-height: 1.8; min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(212, 168, 83, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(179, 58, 42, 0.03) 0%, transparent 50%);
+}
+.top-bar {
+  background: linear-gradient(135deg, #2C2416 0%, #3C3428 100%);
+  color: #F5F0E8; padding: 12px 0; border-bottom: 3px solid var(--accent2);
+}
+.top-bar-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.site-title {
+  font-family: var(--font-display); font-size: 28px;
+  color: var(--accent2); text-decoration: none; letter-spacing: 4px;
+}
+.site-title:hover { color: #E8C97A; }
+.top-nav { display: flex; gap: 24px; align-items: center; }
+.top-nav a { color: #C4B99A; text-decoration: none; font-size: 14px; transition: color 0.3s; }
+.top-nav a:hover { color: var(--accent2); }
+.container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+.detail-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 36px 40px;
+  box-shadow: var(--shadow); max-width: 800px; margin: 0 auto;
+}
+.detail-header {
+  text-align: center; margin-bottom: 32px;
+  padding-bottom: 24px; border-bottom: 2px solid var(--border); position: relative;
+}
+.detail-header::after {
+  content: '◆'; position: absolute; bottom: -10px; left: 50%;
+  transform: translateX(-50%); color: var(--accent2);
+  font-size: 12px; background: var(--card-bg); padding: 0 12px;
+}
+.detail-phrase {
+  font-family: var(--font-display); font-size: 36px;
+  color: var(--accent); letter-spacing: 6px; margin-bottom: 12px;
+}
+.detail-full { font-size: 20px; color: var(--text); margin-bottom: 16px; line-height: 2; }
+.detail-meta {
+  font-size: 13px; color: var(--text-3);
+  display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+}
+.detail-body { font-size: 15px; line-height: 2; color: var(--text-2); }
+.detail-body h1, .detail-body h2, .detail-body h3 { color: var(--accent); margin: 20px 0 12px; }
+.detail-body blockquote {
+  border-left: 3px solid var(--accent2); padding: 8px 16px; margin: 16px 0;
+  background: rgba(212, 168, 83, 0.08); border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--text-2); font-style: italic;
+}
+.detail-body pre {
+  background: #2C2416; color: #E8DCC8; padding: 16px 20px;
+  border-radius: var(--radius); overflow-x: auto; margin: 16px 0;
+  font-size: 14px; line-height: 1.6;
+}
+.detail-body img { max-width: 100%; border-radius: var(--radius); margin: 12px 0; }
+.detail-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+.detail-tags {
+  margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+}
+.tag {
+  display: inline-block; padding: 2px 10px;
+  background: rgba(212, 168, 83, 0.1); color: var(--accent2);
+  border-radius: 12px; font-size: 12px; text-decoration: none;
+}
+.tag:hover { background: rgba(212, 168, 83, 0.25); }
+.back-link {
+  display: inline-block; margin-top: 24px; color: var(--accent);
+  text-decoration: none; font-size: 14px; transition: color 0.3s;
+}
+.back-link:hover { color: var(--accent2); }
+.footer {
+  text-align: center; padding: 32px 20px; color: var(--text-3);
+  font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .top-bar-inner { flex-direction: column; gap: 8px; }
+  .site-title { font-size: 22px; }
+  .detail-card { padding: 24px 16px; }
+  .detail-phrase { font-size: 26px; }
+  .detail-full { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="/" class="site-title">半截话别乱用</a>
+    <nav class="top-nav"><a href="/">首页</a><a href="/admin/">后台</a></nav>
+  </div>
+</div>
+
+<div class="container">
+  <article class="detail-card">
+    <header class="detail-header">
+      <h1 class="detail-phrase">「{{phrase}}」</h1>
+      <p class="detail-full">{{fullText}}</p>
+      <div class="detail-meta">
+        <span>📂 {{category}}</span>
+        <span>📖 {{source}}</span>
+        {{#author}}<span>✍️ {{author}}</span>{{/author}}
+        <span>📅 {{dateStr}}</span>
+      </div>
+    </header>
+
+    <div class="detail-body">{{{contentHtml}}}</div>
+
+    {{#notes}}
+    <div style="margin-top:24px;padding:16px;background:rgba(212,168,83,0.08);border-radius:8px;border-left:3px solid var(--accent2);">
+      <strong style="color:var(--accent);">💡 备注：</strong>
+      <p style="margin-top:6px;color:var(--text-2);">{{notes}}</p>
+    </div>
+    {{/notes}}
+
+    {{#hasCitations}}
+    <div style="margin-top:24px;">
+      <h3 style="color:var(--accent);font-size:16px;margin-bottom:12px;">📚 引用参考</h3>
+      {{#citations}}
+      <blockquote style="margin-bottom:8px;">
+        <p>{{text}}</p>
+        {{#source}}<footer style="font-size:12px;color:var(--text-3);margin-top:4px;">—— {{source}}</footer>{{/source}}
+      </blockquote>
+      {{/citations}}
+    </div>
+    {{/hasCitations}}
+
+    {{#hasTags}}
+    <div class="detail-tags">
+      <span style="font-size:13px;color:var(--text-3);">🏷️ 标签：</span>
+      {{#tags}}<a href="/tag/{{.}}" class="tag">{{.}}</a>{{/tags}}
+    </div>
+    {{/hasTags}}
+  </article>
+
+  <div style="text-align:center;">
+    <a href="/" class="back-link">← 返回首页</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>{{siteName}} © 2024 · 传承中华文化，还原经典本意</p>
+</footer>
+</body>
+</html>

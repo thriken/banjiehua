@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{siteName}} - {{siteDescription}}</title>
+<meta name="description" content="{{siteDescription}}">
+<meta name="keywords" content="{{keywords}}">
+<link rel="canonical" href="{{siteUrl}}">
+<meta property="og:title" content="{{siteName}}">
+<meta property="og:description" content="{{siteDescription}}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{siteUrl}}">
+<style>
+/* 国风主题样式 - 详见 style.css */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Ma+Shan+Zheng&display=swap');
+
+:root {
+  --bg: #F5F0E8;
+  --card-bg: #FFFBF5;
+  --text: #3C3428;
+  --text-2: #6B5E4F;
+  --text-3: #999080;
+  --accent: #B33A2A;
+  --accent2: #D4A853;
+  --border: #D4C5B9;
+  --shadow: 0 2px 12px rgba(60, 52, 40, 0.08);
+  --radius: 8px;
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', 'STSong', serif;
+  --font-display: 'Ma Shan Zheng', 'Noto Serif SC', cursive;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-serif);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(212, 168, 83, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(179, 58, 42, 0.03) 0%, transparent 50%);
+}
+
+.top-bar {
+  background: linear-gradient(135deg, #2C2416 0%, #3C3428 100%);
+  color: #F5F0E8;
+  padding: 12px 0;
+  border-bottom: 3px solid var(--accent2);
+}
+.top-bar-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.site-title {
+  font-family: var(--font-display);
+  font-size: 28px; color: var(--accent2);
+  text-decoration: none; letter-spacing: 4px;
+}
+.site-title:hover { color: #E8C97A; }
+.top-nav { display: flex; gap: 24px; align-items: center; }
+.top-nav a {
+  color: #C4B99A; text-decoration: none;
+  font-size: 14px; transition: color 0.3s;
+}
+.top-nav a:hover { color: var(--accent2); }
+
+.search-bar {
+  background: #FFFBF5;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+.search-bar-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.search-form { display: flex; max-width: 500px; margin: 0 auto; }
+.search-input {
+  flex: 1; padding: 10px 16px;
+  border: 1px solid var(--border); border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  font-family: var(--font-serif); font-size: 15px;
+  background: #FFFBF5; color: var(--text); outline: none;
+}
+.search-input:focus { border-color: var(--accent2); }
+.search-btn {
+  padding: 10px 20px; border: none;
+  background: var(--accent); color: #FFFBF5;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  cursor: pointer; font-family: var(--font-serif); font-size: 15px;
+}
+.search-btn:hover { background: #9A2E20; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+.intro-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 28px 32px; margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.intro-card h2 {
+  font-family: var(--font-display);
+  font-size: 24px; color: var(--accent);
+  margin-bottom: 12px; letter-spacing: 2px;
+}
+.intro-card p { color: var(--text-2); font-size: 15px; line-height: 1.9; }
+
+.cat-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.cat-nav a, .cat-nav span {
+  display: inline-block; padding: 6px 16px;
+  border: 1px solid var(--border); border-radius: 20px;
+  text-decoration: none; color: var(--text-2);
+  font-size: 13px; transition: all 0.3s; background: var(--card-bg);
+}
+.cat-nav a:hover, .cat-nav a.active {
+  background: var(--accent); color: #FFFBF5; border-color: var(--accent);
+}
+
+.entry-list { display: grid; gap: 16px; }
+.entry-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px 28px; box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative; overflow: hidden;
+}
+.entry-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(60, 52, 40, 0.12);
+}
+.entry-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--accent2); border-radius: 3px 0 0 3px;
+}
+.entry-phrase {
+  font-family: var(--font-display);
+  font-size: 22px; color: var(--accent);
+  margin-bottom: 8px; letter-spacing: 3px;
+  display: flex; align-items: center; gap: 12px;
+}
+.entry-cat-tag {
+  display: inline-block; padding: 2px 10px;
+  background: var(--accent); color: #FFFBF5;
+  border-radius: 12px; font-size: 12px;
+  font-family: var(--font-serif); letter-spacing: 1px;
+}
+.entry-full { font-size: 16px; color: var(--text); margin-bottom: 8px; line-height: 1.9; }
+.entry-source { font-size: 13px; color: var(--text-3); }
+.entry-source::before { content: '—— '; }
+.entry-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  display: inline-block; padding: 2px 10px;
+  background: rgba(212, 168, 83, 0.1); color: var(--accent2);
+  border-radius: 12px; font-size: 12px; text-decoration: none;
+}
+.tag:hover { background: rgba(212, 168, 83, 0.25); }
+
+.pagination {
+  display: flex; justify-content: center; align-items: center;
+  gap: 12px; margin-top: 32px; padding: 20px 0;
+}
+.pagination a, .pagination span {
+  display: inline-block; padding: 8px 18px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  text-decoration: none; color: var(--text-2);
+  font-size: 14px; background: var(--card-bg); transition: all 0.3s;
+}
+.pagination a:hover { background: var(--accent); color: #FFFBF5; border-color: var(--accent); }
+.pagination .current { background: var(--accent); color: #FFFBF5; border-color: var(--accent); }
+.pagination .disabled { opacity: 0.4; pointer-events: none; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-3); }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+.empty-state h3 { font-family: var(--font-display); font-size: 22px; color: var(--text-2); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; }
+
+.footer {
+  text-align: center; padding: 32px 20px;
+  color: var(--text-3); font-size: 13px;
+  border-top: 1px solid var(--border); margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .top-bar-inner { flex-direction: column; gap: 8px; }
+  .site-title { font-size: 22px; }
+  .entry-card { padding: 18px 16px; }
+  .entry-phrase { font-size: 18px; }
+  .intro-card { padding: 20px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="/" class="site-title">半截话别乱用</a>
+    <nav class="top-nav"><a href="/">首页</a><a href="/admin/">后台</a></nav>
+  </div>
+</div>
+
+<div class="search-bar">
+  <div class="search-bar-inner">
+    <form class="search-form" action="/search" method="get">
+      <input class="search-input" type="text" name="q" placeholder="搜索半截话、俗语、诗句..." value="{{query}}" autocomplete="off">
+      <button class="search-btn" type="submit">搜索</button>
+    </form>
+  </div>
+</div>
+
+<div class="container">
+  <div class="intro-card">
+    <h2>执古之道，以御今之有</h2>
+    <p>中国传统文化博大精深，许多俗语、诗句流传至今，却因"断章取义"而失去了本来的意义。本站致力于收集那些被"说半截"的经典语句，还原其完整面貌，让传统智慧回归本源。</p>
+    <p style="margin-top:8px;font-size:13px;color:var(--text-3);">共收录 <strong>{{totalCount}}</strong> 条记录</p>
+  </div>
+
+  <div class="cat-nav">
+    <a href="/" class="{{^currentCat}}active{{/currentCat}}">全部</a>
+    {{#categories}}<a href="/category/{{name}}" class="{{#active}}active{{/active}}">{{name}}</a>{{/categories}}
+  </div>
+
+  {{#entries}}
+  <div class="entry-list">
+    {{#entries}}
+    <a href="/entry/{{id}}" style="text-decoration:none;color:inherit;">
+      <article class="entry-card">
+        <div class="entry-phrase">「{{phrase}}」<span class="entry-cat-tag">{{category}}</span></div>
+        <div class="entry-full">{{fullText}}</div>
+        <div class="entry-source">{{source}}{{#author}} · {{author}}{{/author}}</div>
+        {{#tags}}<div class="entry-tags">{{#tags}}<span class="tag">{{.}}</span>{{/tags}}</div>{{/tags}}
+      </article>
+    </a>
+    {{/entries}}
+  </div>
+  {{/entries}}
+
+  {{^entries}}
+  <div class="empty-state">
+    <div class="empty-icon">📭</div>
+    <h3>暂无收录</h3>
+    <p>{{#query}}未找到与"{{query}}"相关的内容，换个关键词试试{{/query}}{{^query}}还没有收录任何内容，快去后台添加吧{{/query}}</p>
+  </div>
+  {{/entries}}
+
+  {{#hasPages}}
+  <div class="pagination">
+    {{#prevPage}}<a href="{{prevUrl}}">← 上一页</a>{{/prevPage}}
+    {{^prevPage}}<span class="disabled">← 上一页</span>{{/prevPage}}
+    <span class="current">第 {{page}} / {{totalPages}} 页</span>
+    {{#nextPage}}<a href="{{nextUrl}}">下一页 →</a>{{/nextPage}}
+    {{^nextPage}}<span class="disabled">下一页 →</span>{{/nextPage}}
+  </div>
+  {{/hasPages}}
+</div>
+
+<footer class="footer">
+  <p>{{siteName}} © 2024 · 传承中华文化，还原经典本意</p>
+  <p style="margin-top:4px;"><a href="/sitemap.xml" style="color:var(--text-3);">Sitemap</a></p>
+</footer>
+</body>
+</html>

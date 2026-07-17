@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{#isEdit}}编辑条目{{/isEdit}}{{^isEdit}}新增条目{{/isEdit}} - {{siteName}}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Ma+Shan+Zheng&display=swap');
+
+:root {
+  --bg: #F5F0E8; --card-bg: #FFFBF5; --text: #3C3428;
+  --text-2: #6B5E4F; --text-3: #999080; --accent: #B33A2A;
+  --accent2: #D4A853; --border: #D4C5B9;
+  --shadow: 0 2px 12px rgba(60, 52, 40, 0.08); --radius: 8px;
+  --font-serif: 'Noto Serif SC', 'SimSun', serif;
+  --font-display: 'Ma Shan Zheng', 'Noto Serif SC', cursive;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-serif); background: var(--bg); color: var(--text); line-height: 1.8; min-height: 100vh; }
+.top-bar { background: linear-gradient(135deg, #2C2416 0%, #3C3428 100%); color: #F5F0E8; padding: 12px 0; border-bottom: 3px solid var(--accent2); }
+.top-bar-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
+.site-title { font-family: var(--font-display); font-size: 28px; color: var(--accent2); text-decoration: none; letter-spacing: 4px; }
+.site-title:hover { color: #E8C97A; }
+.top-nav { display: flex; gap: 24px; align-items: center; }
+.top-nav a { color: #C4B99A; text-decoration: none; font-size: 14px; transition: color 0.3s; }
+.top-nav a:hover { color: var(--accent2); }
+.container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+.admin-form {
+  max-width: 700px; margin: 0 auto; background: var(--card-bg);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px; box-shadow: var(--shadow);
+}
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 14px; color: var(--text-2); margin-bottom: 6px; font-weight: 500; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius); font-family: var(--font-serif);
+  font-size: 15px; color: var(--text); background: var(--bg); outline: none;
+  transition: border-color 0.3s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+.form-group textarea { min-height: 120px; resize: vertical; }
+.form-group .hint { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+
+.btn { display: inline-block; padding: 8px 18px; border: none; border-radius: var(--radius); font-family: var(--font-serif); font-size: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; }
+.btn-primary { background: var(--accent); color: #FFFBF5; }
+.btn-primary:hover { background: #9A2E20; }
+.btn-secondary { background: var(--bg); color: var(--text-2); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--border); }
+.toast { padding: 12px 16px; border-radius: var(--radius); font-size: 14px; margin-bottom: 16px; }
+.toast.error { background: #FADBD8; color: #C0392B; border: 1px solid #F1948A; }
+.footer { text-align: center; padding: 32px 20px; color: var(--text-3); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="/" class="site-title">半截话别乱用</a>
+    <nav class="top-nav"><a href="/">前台</a><a href="/admin/">管理</a></nav>
+  </div>
+</div>
+
+<div class="container">
+  <h2 style="font-family:var(--font-display);color:var(--accent);font-size:24px;letter-spacing:2px;margin-bottom:24px;">
+    {{#isEdit}}✏️ 编辑条目{{/isEdit}}{{^isEdit}}➕ 新增条目{{/isEdit}}
+  </h2>
+
+  {{#message}}<div class="toast {{msgType}}">{{message}}</div>{{/message}}
+
+  <form class="admin-form" method="POST" action="/admin/save">
+    {{#isEdit}}<input type="hidden" name="id" value="{{id}}">{{/isEdit}}
+
+    <div class="form-group">
+      <label>半截话 / 短语 *</label>
+      <input type="text" name="phrase" value="{{phrase}}" placeholder="例如：以德报怨" required>
+      <span class="hint">流传中被"断章取义"的短句</span>
+    </div>
+
+    <div class="form-group">
+      <label>全句 / 全文 *</label>
+      <textarea name="fullText" placeholder="例如：以德报怨，何以报德？以直报怨，以德报德。" required>{{fullText}}</textarea>
+      <span class="hint">完整的原句，还原其本意</span>
+    </div>
+
+    <div class="form-group">
+      <label>分类 *</label>
+      <select name="category" required>
+        <option value="">请选择分类</option>
+        {{#categoryOptions}}<option value="{{name}}" {{#selected}}selected{{/selected}}>{{name}}</option>{{/categoryOptions}}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>来源 / 出处</label>
+      <input type="text" name="source" value="{{source}}" placeholder="例如：《论语·宪问》">
+    </div>
+
+    <div class="form-group">
+      <label>作者 / 译者</label>
+      <input type="text" name="author" value="{{author}}" placeholder="例如：孔子">
+    </div>
+
+    <div class="form-group">
+      <label>标签（用逗号分隔）</label>
+      <input type="text" name="tagsStr" value="{{tagsStr}}" placeholder="例如：论语, 儒家, 为人处世">
+    </div>
+
+    <div class="form-group">
+      <label>备注（支持 Markdown 格式）</label>
+      <textarea name="notes" placeholder="补充说明">{{notes}}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>引用参考 <span style="font-size:12px;color:var(--text-3);">（每行一条，格式：引用文字 | 来源）</span></label>
+      <textarea name="citations" placeholder="引用文字 | 引用来源&#10;另一条引用 | 来源" style="min-height:80px;">{{citationsStr}}</textarea>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:24px;">
+      <button type="submit" class="btn btn-primary">💾 保存</button>
+      <a href="/admin/" class="btn btn-secondary">取消</a>
+    </div>
+  </form>
+</div>
+
+<footer class="footer"><p>{{siteName}} · 后台管理</p></footer>
+</body>
+</html>

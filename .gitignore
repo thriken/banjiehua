@@ -1,0 +1,16 @@
+# Cloudflare Workers 部署配置（含 KV namespace ID，不应提交到仓库）
+wrangler.toml
+
+# Wrangler 运行时数据
+.wrangler/
+
+# 依赖
+node_modules/
+
+# 日志
+*.log
+
+# 导出数据
+*.json
+*.md
+!readme.md
