@@ -17,8 +17,46 @@ const CATEGORIES = ['诗句', '俗语', '成语', '方言', '其他'];
 
 // ★ 主题 CSS 入口 — 指向 GitHub 上的 themes/style.css
 //   切换主题：编辑 GitHub 仓库中 themes/style.css 的 @import 路径即可，无需改 index.js
+//   Worker 会代理拉取并合并 CSS，从同域 /style.css 返回（避免浏览器插件拦截外部 CSS）
 //   如果 Fork 了自己的仓库，改下面这行 URL 即可
-const STYLE_CSS_URL = 'https://cdn.jsdelivr.net/gh/thriken/banjiehua/themes/style.css';
+const GITHUB_THEME_ENTRY = 'https://raw.githubusercontent.com/thriken/banjiehua/master/themes/style.css';
+const STYLE_CSS_URL = '/style.css'; // 同域路径，Worker 代理拉取并合并 GitHub 上的主题 CSS
+
+// ==================== 主题 CSS 代理与缓存 ====================
+let cssCache = null;
+let cssCacheTime = 0;
+const CSS_CACHE_TTL = 600000; // 缓存 10 分钟
+
+async function fetchThemeCSS() {
+  const now = Date.now();
+  if (cssCache && (now - cssCacheTime) < CSS_CACHE_TTL) return cssCache;
+
+  // 1. 拉取 themes/style.css（主题入口）
+  const entryResp = await fetch(GITHUB_THEME_ENTRY);
+  if (!entryResp.ok) {
+    if (cssCache) return cssCache; // 有旧缓存就先用
+    throw new Error(`Failed to fetch theme entry: ${entryResp.status}`);
+  }
+  const entryCss = await entryResp.text();
+
+  // 2. 解析 @import，拉取真正的主题 CSS
+  const importMatch = entryCss.match(/@import\s+url\(['"]?([^'")\s]+)['"]?\)/);
+  if (importMatch) {
+    const importUrl = importMatch[1];
+    const themeResp = await fetch(importUrl);
+    if (themeResp.ok) {
+      const themeCss = await themeResp.text();
+      cssCache = entryCss + '\n' + themeCss;
+      cssCacheTime = now;
+      return cssCache;
+    }
+  }
+
+  // fallback: @import 失败就返回入口 CSS 本身（浏览器自行解析 @import）
+  cssCache = entryCss;
+  cssCacheTime = now;
+  return cssCache;
+}
 
 // ==================== 简易模板引擎 ====================
 function escapeHtml(str) {
@@ -1124,6 +1162,8 @@ async function handleApiSearch(request, env) {
   });
 }
 
+
+
 // ==================== 主入口 ====================
 export default {
   async fetch(request, env, ctx) {
@@ -1143,6 +1183,22 @@ export default {
       }
 
       // 路由分发
+      if (pathname === '/style.css') {
+        try {
+          const css = await fetchThemeCSS();
+          return new Response(css, {
+            headers: {
+              'Content-Type': 'text/css;charset=UTF-8',
+              'Cache-Control': 'public, max-age=600',
+            },
+          });
+        } catch (e) {
+          return new Response('/* Theme CSS unavailable */', {
+            headers: { 'Content-Type': 'text/css;charset=UTF-8' },
+          });
+        }
+      }
+
       if (pathname === '/' || pathname.startsWith('/page/') || pathname.startsWith('/category/') || pathname.startsWith('/tag/')) {
         return await handleHome(request, env);
       }
