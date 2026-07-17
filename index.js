@@ -18,7 +18,7 @@ const CATEGORIES = ['诗句', '俗语', '成语', '方言', '其他'];
 // ★ 主题 CSS 入口 — 指向 GitHub 上的 themes/style.css
 //   切换主题：编辑 GitHub 仓库中 themes/style.css 的 @import 路径即可，无需改 index.js
 //   如果 Fork 了自己的仓库，改下面这行 URL 即可
-const STYLE_CSS_URL = 'https://raw.githubusercontent.com/thriken/banjiehua/main/themes/style.css';
+const STYLE_CSS_URL = 'https://raw.githubusercontent.com/thriken/banjiehua/master/themes/style.css';
 
 // ==================== 简易模板引擎 ====================
 function escapeHtml(str) {

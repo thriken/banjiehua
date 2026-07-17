@@ -56,7 +56,7 @@ banjiehua/
 const SITE_DOMAIN = '你的域名.com';
 
 // 主题 CSS URL（填你 Fork 后的 GitHub Raw URL）
-const THEME_CSS_URL = 'https://raw.githubusercontent.com/你的用户名/banjiehua/main/themes/style.css';
+const THEME_CSS_URL = 'https://raw.githubusercontent.com/你的用户名/banjiehua/master/themes/style.css';
 ```
 
 4. 在 Worker 设置中绑定资源和机密：
@@ -79,7 +79,7 @@ const CACHE_TTL = 3600;
 const CATEGORIES = ['诗句', '俗语', '成语', '方言', '其他'];
 
 // 如果你 Fork 了仓库，改成你的 GitHub Raw URL
-const STYLE_CSS_URL = 'https://raw.githubusercontent.com/你的用户名/banjiehua/main/themes/style.css';
+const STYLE_CSS_URL = 'https://raw.githubusercontent.com/你的用户名/banjiehua/master/themes/style.css';
 ```
 
 ## 切换主题
