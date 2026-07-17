@@ -18,7 +18,7 @@ const CATEGORIES = ['诗句', '俗语', '成语', '方言', '其他'];
 // ★ 主题 CSS 入口 — 指向 GitHub 上的 themes/style.css
 //   切换主题：编辑 GitHub 仓库中 themes/style.css 的 @import 路径即可，无需改 index.js
 //   如果 Fork 了自己的仓库，改下面这行 URL 即可
-const STYLE_CSS_URL = 'https://raw.githubusercontent.com/thriken/banjiehua/master/themes/style.css';
+const STYLE_CSS_URL = 'https://cdn.jsdelivr.net/gh/thriken/banjiehua/themes/style.css';
 
 // ==================== 简易模板引擎 ====================
 function escapeHtml(str) {
@@ -44,10 +44,7 @@ function render(template, data) {
     if (typeof items === 'object') {
       return render(content, { ...data, ...items });
     }
-    if (items === true || items === 1) {
-      return render(content, data);
-    }
-    return '';
+    return render(content, data);
   });
 
   result = result.replace(/\{\{\^(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (match, key, content) => {
@@ -242,7 +239,7 @@ function getHomeTemplate() {
     {{/categories}}
   </div>
 
-  {{#entries}}
+  {{#hasEntries}}
   <div class="entry-list">
     {{#entries}}
     <a href="/entry/{{id}}" style="text-decoration:none;color:inherit;">
@@ -253,26 +250,26 @@ function getHomeTemplate() {
         </div>
         <div class="entry-full">{{fullText}}</div>
         <div class="entry-source">{{source}}{{#author}} · {{author}}{{/author}}</div>
-        {{#tags}}
+        {{#hasTags}}
         <div class="entry-tags">
           {{#tags}}
           <span class="tag">{{.}}</span>
           {{/tags}}
         </div>
-        {{/tags}}
+        {{/hasTags}}
       </article>
     </a>
     {{/entries}}
   </div>
-  {{/entries}}
+  {{/hasEntries}}
 
-  {{^entries}}
+  {{^hasEntries}}
   <div class="empty-state">
     <div class="empty-icon">📭</div>
     <h3>暂无收录</h3>
     <p>{{#query}}未找到与"{{query}}"相关的内容，换个关键词试试吧{{/query}}{{^query}}还没有收录任何内容，快去后台添加吧{{/query}}</p>
   </div>
-  {{/entries}}
+  {{/hasEntries}}
 
   {{#hasPages}}
   <div class="pagination">
@@ -420,7 +417,7 @@ function getAdminListTemplate() {
   <div class="toast {{msgType}}" style="position:static;margin-bottom:16px;">{{message}}</div>
   {{/message}}
 
-  {{#entries}}
+  {{#hasEntries}}
   <table class="admin-table">
     <thead>
       <tr>
@@ -446,15 +443,15 @@ function getAdminListTemplate() {
       {{/entries}}
     </tbody>
   </table>
-  {{/entries}}
+  {{/hasEntries}}
 
-  {{^entries}}
+  {{^hasEntries}}
   <div class="empty-state">
     <div class="empty-icon">📭</div>
     <h3>还没有任何内容</h3>
     <p>点击右上角「新增条目」开始收录吧</p>
   </div>
-  {{/entries}}
+  {{/hasEntries}}
 </div>
 
 <footer class="footer">
@@ -696,7 +693,9 @@ async function handleHome(request, env) {
     entries: pagedEntries.map(e => ({
       ...e,
       tags: e.tags || [],
+      hasTags: (e.tags || []).length > 0,
     })),
+    hasEntries: pagedEntries.length > 0,
     categories: categories,
     currentCat: currentCat,
     page: currentPage,
@@ -788,6 +787,7 @@ async function handleAdmin(request, env) {
       ...e,
       fullTextShort: e.fullText ? (e.fullText.length > 20 ? e.fullText.slice(0, 20) + '...' : e.fullText) : '',
     })),
+    hasEntries: entries.length > 0,
     message: message,
     msgType: msgType,
   });

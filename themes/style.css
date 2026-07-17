@@ -9,4 +9,4 @@
      （新建 themes/新主题名/style.css 然后改下面的路径）
    ============================================ */
 
-@import url('https://raw.githubusercontent.com/thriken/banjiehua/master/themes/default/style.css');
+@import url('https://cdn.jsdelivr.net/gh/thriken/banjiehua/themes/default/style.css');
