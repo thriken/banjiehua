@@ -2,9 +2,9 @@
  * 半截话别乱用 - Cloudflare Workers
  * 收集中国传统文化中的半截话，还原其本意
  * 
- * 部署只需 2 个环境变量：
- *   1. AUTH_CODE — 后台密码（在 CF 控制台设置 Secret）
- *   2. KV 命名空间绑定 — 绑定名 BANJIEHUA_KV
+ * 部署只需 2 个步骤：
+ *   1.环境变量 AUTH_CODE — 后台密码（在 CF 控制台设置 Secret）
+ *   2.资源绑定 KV 命名空间绑定 — 绑定名 BANJIEHUA_KV
  */
 
 // ==================== 配置（硬编码常量）====================
@@ -77,7 +77,12 @@ function render(template, data) {
     const items = data[key];
     if (!items) return '';
     if (Array.isArray(items)) {
-      return items.map(item => render(content, { ...data, ...item })).join('');
+      return items.map(item => {
+        if (typeof item === 'string' || typeof item === 'number') {
+          return render(content, { ...data, '.': item });
+        }
+        return render(content, { ...data, ...item });
+      }).join('');
     }
     if (typeof items === 'object') {
       return render(content, { ...data, ...items });
@@ -95,6 +100,13 @@ function render(template, data) {
 
   result = result.replace(/\{\{\{(\w+)\}\}\}/g, (match, key) => {
     return data[key] !== undefined ? String(data[key]) : '';
+  });
+
+  result = result.replace(/\{\{\.\}\}/g, () => {
+    if (data['.'] !== undefined && data['.'] !== null) {
+      return escapeHtml(String(data['.']));
+    }
+    return '';
   });
 
   result = result.replace(/\{\{(\w+)\}\}/g, (match, key) => {
@@ -166,7 +178,16 @@ function parseMarkdown(text) {
 // ==================== KV 操作 ====================
 async function getAllEntries(env) {
   const index = await env.BANJIEHUA_KV.get('_index', 'json');
-  return index || [];
+  if (!index || index.length === 0) return [];
+
+  const entries = await Promise.all(
+    index.map(async item => {
+      const entry = await env.BANJIEHUA_KV.get('entry_' + item.id, 'json');
+      return entry || item;
+    })
+  );
+
+  return entries.filter(Boolean);
 }
 
 async function saveIndex(env, index) {
@@ -380,7 +401,7 @@ function getDetailTemplate() {
     </header>
 
     <div class="detail-body">
-      {{{contentHtml}}}
+      {{{meaningHtml}}}
     </div>
 
     {{#notes}}
@@ -448,7 +469,10 @@ function getAdminListTemplate() {
 <div class="container">
   <div class="admin-header">
     <h2>📋 内容管理</h2>
-    <a href="/admin/new" class="btn btn-primary">+ 新增条目</a>
+    <div style="display:flex;gap:8px;">
+      <a href="/admin/flush-cache" class="btn btn-secondary" onclick="return confirm('确定刷新缓存吗？')">🔄 刷新缓存</a>
+      <a href="/admin/new" class="btn btn-primary">+ 新增条目</a>
+    </div>
   </div>
 
   {{#message}}
@@ -541,6 +565,12 @@ function getAdminEditTemplate() {
       <label>全句 / 全文 *</label>
       <textarea name="fullText" placeholder="例如：以德报怨，何以报德？以直报怨，以德报德。" required>{{fullText}}</textarea>
       <span class="hint">完整的原句，还原其本意</span>
+    </div>
+
+    <div class="form-group">
+      <label>释义 / 注释</label>
+      <textarea name="meaning" placeholder="被断章取义后的真实含义、解释说明">{{meaning}}</textarea>
+      <span class="hint">被断章取义后的真实含义，用于词条说明</span>
     </div>
 
     <div class="form-group">
@@ -760,7 +790,7 @@ async function handleDetail(request, env, id) {
     return new Response('Not Found', { status: 404 });
   }
 
-  const contentHtml = parseMarkdown(entry.notes || '');
+  const meaningHtml = parseMarkdown(entry.meaning || '');
   const citations = entry.citations || [];
   const tags = entry.tags || [];
 
@@ -777,8 +807,9 @@ async function handleDetail(request, env, id) {
     tags: tags,
     tagsStr: tags.join(', '),
     hasTags: tags.length > 0,
+    meaning: entry.meaning || '',
+    meaningHtml: meaningHtml,
     notes: entry.notes || '',
-    contentHtml: contentHtml,
     citations: citations,
     hasCitations: citations.length > 0,
     createdAt: entry.createdAt || '',
@@ -815,6 +846,7 @@ async function handleAdmin(request, env) {
   let msgType = 'success';
   if (msg === 'saved') message = '✅ 保存成功！';
   else if (msg === 'deleted') message = '🗑️ 已删除';
+  else if (msg === 'cache-flushed') message = '🔄 缓存已刷新';
   else if (msg === 'error') { message = '❌ 操作失败'; msgType = 'error'; }
 
   const template = getAdminListTemplate();
@@ -880,6 +912,7 @@ async function handleAdminNew(request, env) {
     isEdit: false,
     phrase: '',
     fullText: '',
+    meaning: '',
     category: '',
     source: '',
     author: '',
@@ -915,6 +948,7 @@ async function handleAdminEdit(request, env, id) {
     id: entry.id,
     phrase: entry.phrase,
     fullText: entry.fullText,
+    meaning: entry.meaning || '',
     category: entry.category,
     source: entry.source || '',
     author: entry.author || '',
@@ -957,6 +991,7 @@ async function handleAdminSave(request, env) {
     id: id,
     phrase: (formData.get('phrase') || '').trim(),
     fullText: (formData.get('fullText') || '').trim(),
+    meaning: (formData.get('meaning') || '').trim(),
     category: (formData.get('category') || '').trim(),
     source: (formData.get('source') || '').trim(),
     author: (formData.get('author') || '').trim(),
@@ -976,6 +1011,7 @@ async function handleAdminSave(request, env) {
       id: entry.id,
       phrase: entry.phrase,
       fullText: entry.fullText,
+      meaning: entry.meaning || '',
       category: entry.category,
       source: entry.source,
       author: entry.author,
@@ -1004,6 +1040,21 @@ async function handleAdminSave(request, env) {
     status: 302,
     headers: {
       'Location': '/admin/?msg=saved',
+      'Set-Cookie': await makeAuthCookie(env.AUTH_CODE),
+    },
+  });
+}
+
+async function handleFlushCache(request, env) {
+  if (!(await checkAuth(request, env))) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+  cssCache = null;
+  cssCacheTime = 0;
+  return new Response('', {
+    status: 302,
+    headers: {
+      'Location': '/admin/?msg=cache-flushed',
       'Set-Cookie': await makeAuthCookie(env.AUTH_CODE),
     },
   });
@@ -1246,6 +1297,10 @@ export default {
 
       if (pathname === '/admin/save') {
         return await handleAdminSave(request, env);
+      }
+
+      if (pathname === '/admin/flush-cache') {
+        return await handleFlushCache(request, env);
       }
 
       if (pathname.startsWith('/admin/delete/')) {
