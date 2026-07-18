@@ -1,7 +1,8 @@
 /**
  * 半截话别乱用 - Cloudflare Workers
  * 收集中国传统文化中的半截话，还原其本意
- * 
+ *  Version: 1.1 release
+ *  Author: thriken
  * 部署只需 2 个步骤：
  *   1.环境变量 AUTH_CODE — 后台密码（在 CF 控制台设置 Secret）
  *   2.资源绑定 KV 命名空间绑定 — 绑定名 BANJIEHUA_KV
@@ -813,6 +814,7 @@ async function handleDetail(request, env, id) {
     notes: entry.notes || '',
     notesHtml: notesHtml,
     hasCitations: citations.length > 0,
+    citations: citations,
     createdAt: entry.createdAt || '',
     updatedAt: entry.updatedAt || '',
     dateStr: (entry.createdAt || '').split('T')[0],
