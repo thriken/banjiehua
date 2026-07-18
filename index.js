@@ -407,7 +407,7 @@ function getDetailTemplate() {
     {{#notes}}
     <div style="margin-top:24px;padding:16px;background:rgba(212,168,83,0.08);border-radius:8px;border-left:3px solid var(--accent2);">
       <strong style="color:var(--accent);">💡 备注：</strong>
-      <p style="margin-top:6px;color:var(--text-2);">{{notes}}</p>
+      <div style="margin-top:6px;color:var(--text-2);">{{{notesHtml}}}</div>
     </div>
     {{/notes}}
 
@@ -791,6 +791,7 @@ async function handleDetail(request, env, id) {
   }
 
   const meaningHtml = parseMarkdown(entry.meaning || '');
+  const notesHtml = parseMarkdown(entry.notes || '');
   const citations = entry.citations || [];
   const tags = entry.tags || [];
 
@@ -810,7 +811,7 @@ async function handleDetail(request, env, id) {
     meaning: entry.meaning || '',
     meaningHtml: meaningHtml,
     notes: entry.notes || '',
-    citations: citations,
+    notesHtml: notesHtml,
     hasCitations: citations.length > 0,
     createdAt: entry.createdAt || '',
     updatedAt: entry.updatedAt || '',
