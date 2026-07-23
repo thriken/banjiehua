@@ -146,6 +146,57 @@ function parseMarkdown(text) {
   });
   html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
 
+  // ===== Markdown 表格 =====
+  const tableRowRe = /^\|(.+)\|[\t ]*$/;
+  const tableSepRe = /^\|[\s\-:|]+\|[\t ]*$/;
+  const preLines = html.split('\n');
+  const tableResult = [];
+  let inTable = false;
+  let tableRows = [];
+
+  for (let i = 0; i < preLines.length; i++) {
+    const line = preLines[i].trim();
+    if (tableRowRe.test(line)) {
+      if (tableSepRe.test(line)) {
+        // 分隔行跳過
+        continue;
+      }
+      if (!inTable) { inTable = true; tableRows = []; }
+      const cells = line.replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+      tableRows.push(cells);
+    } else {
+      if (inTable) {
+        // 刷新表格
+        let tableHtml = '<table><thead><tr>';
+        tableRows[0].forEach(c => { tableHtml += '<th>' + c + '</th>'; });
+        tableHtml += '</tr></thead><tbody>';
+        for (let r = 1; r < tableRows.length; r++) {
+          tableHtml += '<tr>';
+          tableRows[r].forEach(c => { tableHtml += '<td>' + c + '</td>'; });
+          tableHtml += '</tr>';
+        }
+        tableHtml += '</tbody></table>';
+        tableResult.push(tableHtml);
+        inTable = false; tableRows = [];
+      }
+      tableResult.push(preLines[i]);
+    }
+  }
+  // 末尾表格刷新
+  if (inTable) {
+    let tableHtml = '<table><thead><tr>';
+    tableRows[0].forEach(c => { tableHtml += '<th>' + c + '</th>'; });
+    tableHtml += '</tr></thead><tbody>';
+    for (let r = 1; r < tableRows.length; r++) {
+      tableHtml += '<tr>';
+      tableRows[r].forEach(c => { tableHtml += '<td>' + c + '</td>'; });
+      tableHtml += '</tr>';
+    }
+    tableHtml += '</tbody></table>';
+    tableResult.push(tableHtml);
+  }
+  html = tableResult.join('\n');
+
   const lines = html.split('\n');
   let inList = false;
   let inBlockquote = false;
