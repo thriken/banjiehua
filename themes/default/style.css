@@ -398,6 +398,37 @@ body {
 .detail-body img { max-width: 100%; border-radius: var(--radius); margin: 12px 0; }
 .detail-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 
+/* ========== Markdown 表格 ========== */
+.detail-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.detail-body th,
+.detail-body td {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  font-size: 15px;
+}
+
+.detail-body thead {
+  background: rgba(212, 168, 83, 0.12);
+}
+
+.detail-body th {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.detail-body tbody tr:nth-child(even) {
+  background: rgba(212, 168, 83, 0.04);
+}
+
 .detail-tags {
   margin-top: 24px;
   padding-top: 20px;
