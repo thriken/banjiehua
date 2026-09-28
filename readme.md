@@ -8,6 +8,22 @@
 
 同时也是对传统文化的传承和保护，让更多人了解和学习。
 
+## 截图
+
+### 前台
+   ![前台](pic/屏幕截图_1_mzfaq.com.jpeg)
+
+### 后台登录页
+   ![后台登录页](pic/屏幕截图_2_mzfaq.com.jpeg)
+
+### 后台
+   ![后台](pic/屏幕截图_3_mzfaq.com.jpeg)
+
+
+# 原理
+ - 采用cloudflare-workers-blog([@github](https://github.com/thriken/cloudflare-workers-blog))相同的想法，使用cloudflare的免费KV和workers进行托管运行和数据存储
+ - 源代码可以保存在github，修改提交后会同步生效
+
 ## 技术栈
 
 - **运行时**：Cloudflare Workers（免费额度充足）
@@ -63,7 +79,7 @@ const THEME_CSS_URL = 'https://raw.githubusercontent.com/你的用户名/banjieh
 
 4. 在 Worker 设置中绑定资源和机密：
    - **KV 命名空间绑定**：创建一个 KV 命名空间，绑定变量名为 `BANJIEHUA_KV`
-   - **机密（Secret）**：添加 `AUTH_CODE`，值为你的后台登录密码
+   - **机密（Secret）**：添加 `AUTH_CODE`，值为你的后台登录密码 [其实设置明文也不怕]
 5. 点击"保存并部署"
 
 > **就这么简单！** 只需要 1 个 KV 绑定 + 1 个 Secret。
