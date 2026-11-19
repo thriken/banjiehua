@@ -459,7 +459,7 @@ function getDetailTemplate() {
     {{#notes}}
     <div style="margin-top:24px;padding:16px;background:rgba(212,168,83,0.08);border-radius:8px;border-left:3px solid var(--accent2);">
       <strong style="color:var(--accent);">💡 备注：</strong>
-      <div style="margin-top:6px;color:var(--text-2);">{{{notesHtml}}}</div>
+      <div class="notes-body" style="margin-top:6px;color:var(--text-2);">{{{notesHtml}}}</div>
     </div>
     {{/notes}}
 

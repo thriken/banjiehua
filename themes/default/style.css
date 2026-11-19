@@ -399,7 +399,8 @@ body {
 .detail-body hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 
 /* ========== Markdown 表格 ========== */
-.detail-body table {
+.detail-body table,
+.notes-body table {
   width: 100%;
   border-collapse: collapse;
   margin: 16px 0;
@@ -409,23 +410,26 @@ body {
   overflow: hidden;
 }
 
-.detail-body th,
-.detail-body td {
+.detail-body th, .detail-body td,
+.notes-body th, .notes-body td {
   padding: 10px 14px;
   border: 1px solid var(--border);
   font-size: 15px;
 }
 
-.detail-body thead {
+.detail-body thead,
+.notes-body thead {
   background: rgba(212, 168, 83, 0.12);
 }
 
-.detail-body th {
+.detail-body th,
+.notes-body th {
   color: var(--accent);
   font-weight: 600;
 }
 
-.detail-body tbody tr:nth-child(even) {
+.detail-body tbody tr:nth-child(even),
+.notes-body tbody tr:nth-child(even) {
   background: rgba(212, 168, 83, 0.04);
 }
 
