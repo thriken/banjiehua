@@ -313,7 +313,7 @@ body {
   border-radius: var(--radius);
   padding: 36px 40px;
   box-shadow: var(--shadow);
-  max-width: 800px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
